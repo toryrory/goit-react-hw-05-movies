@@ -13,6 +13,7 @@ export const Header = styled.div`
   padding-left: 24px;
   padding-top: 12px;
   padding-bottom: 12px;
+  margin-bottom: 25px;
   color: #fff;
   background-color: #8b2d84;
   box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2),

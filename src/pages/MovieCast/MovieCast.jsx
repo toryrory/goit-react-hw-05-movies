@@ -2,11 +2,11 @@ import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { getMovieCredits } from 'services/fetchMovie';
 import { Gallery } from 'components/MovieGallery/MovieGallery.styled';
+import { Text } from './MovieCast.styled';
 
-export const MovieCast = () => {
+const MovieCast = () => {
   const [movieCast, setMovieCast] = useState(null);
   const { movieId } = useParams();
-  console.log(movieCast);
   useEffect(() => {
     getMovieCredits(movieId)
       .then(data => setMovieCast(data))
@@ -30,10 +30,11 @@ export const MovieCast = () => {
             width="300"
             height="450"
           />
-          <p>{name}</p>
+          <Text>{name}</Text>
           <p>Character: {character}</p>
         </li>
       ))}
     </Gallery>
   );
 };
+export default MovieCast;

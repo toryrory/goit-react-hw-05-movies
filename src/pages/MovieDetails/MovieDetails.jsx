@@ -1,15 +1,15 @@
-import { useParams, useLocation, Link, Outlet } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useParams, useLocation } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
 import { getMovieData } from 'services/fetchMovie';
 import { BackLink } from 'components/BackLink/BackLink';
+import { MovieDetailsInfo } from 'components/MovieDetailsInfo/MovieDetailsInfo';
 
-export const MovieDetails = () => {
+const MovieDetails = () => {
   const [movieData, setMovieData] = useState(null);
   const { movieId } = useParams();
-    const location = useLocation();
-    
-  const backLinkHref = location.state?.from ?? '/';
+  const location = useLocation();
 
+  const backLinkHref = useRef(location.state?.from ?? '/');
   useEffect(() => {
     getMovieData(movieId)
       .then(data => setMovieData(data))
@@ -18,31 +18,12 @@ export const MovieDetails = () => {
   if (!movieData) {
     return;
   }
+
   return (
     <main>
-      <BackLink to={backLinkHref}>Back to movies</BackLink>
-      <div>
-        <img
-          src={`https://image.tmdb.org/t/p/w500/${movieData.poster_path}`}
-          alt={`${movieData.title}`}
-        />
-        <div>
-          <h1>
-            {movieData.title} ({movieData.release_date.slice(0, 4)})
-          </h1>
-          <p>
-            Votes: {movieData.vote_average.toFixed(1)} / {movieData.vote_count}{' '}
-            voted
-          </p>
-          <p> genres: {movieData.genres.map(({ name }) => name).join(', ')}</p>
-          <p>{movieData.overview}</p>
-        </div>
-      </div>
-      <ul>
-        <Link to="cast">Cast information</Link>
-        <Link to="reviews">Review information</Link>
-          </ul>
-          <Outlet/>
+      <BackLink path={backLinkHref.current}>Back to movies</BackLink>
+      <MovieDetailsInfo movieInfo={movieData} />
     </main>
   );
 };
+export default MovieDetails;

@@ -6,26 +6,43 @@ import {
   SearchForm,
   SearchFormButton,
   SearchFormInput,
-} from './MoviesSearchBar.styled';
+} from './Movies.styled';
 import { getSearchedMovies } from 'services/fetchMovie';
+import { MovieGallery } from '../../components/MovieGallery/MovieGallery';
+import { toast, ToastContainer } from 'react-toastify';
+import { injectStyle } from 'react-toastify/dist/inject-style';
+injectStyle();
 
-export const Movies = () => {
-  const [movie, setMovie] = useState(null);
+const Movies = () => {
+  const [movies, setMovies] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const movieName = searchParams.get('moviename');
 
-    useEffect(() => {
-        if (!movieName) {
-          return
-        }
-        getSearchedMovies(movieName).then(data => console.log(data)).catch(error => console.log(error))
-        
-  },[movieName])
+  useEffect(() => {
+    if (!movieName) {
+      return;
+    }
+
+    getSearchedMovies(movieName.toLowerCase())
+      .then(data => {
+        data.length > 0
+          ? setMovies(data)
+          : toast.info(
+              'Sorry, site search did not return any results. Try to change your request.'
+            );
+      })
+      .catch(error => console.log(error));
+  }, [movieName]);
 
   const handleSubmit = e => {
     e.preventDefault();
     const form = e.currentTarget;
-    setSearchParams({ moviename: form.elements.movie.value });
+    const formValue = form.elements.movie.value;
+    if (formValue) {
+      setSearchParams({ moviename: form.elements.movie.value });
+    } else {
+      toast.error('Please, enter a movie name');
+    }
     form.reset();
   };
   return (
@@ -45,6 +62,9 @@ export const Movies = () => {
           />
         </SearchForm>
       </Header>
+      {movies && <MovieGallery movies={movies} />}
+      <ToastContainer autoClose={3000} />
     </main>
   );
 };
+export default Movies;
